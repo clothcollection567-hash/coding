@@ -1,0 +1,133 @@
+#include <iostream>
+#include <vector>
+#include <fstream>
+#include <iomanip>
+using namespace std;
+
+class Student {
+private:
+    int id;
+    string name;
+    float marks;
+
+public:
+    Student(int studentId, string studentName, float studentMarks) {
+        id = studentId;
+        name = studentName;
+        marks = studentMarks;
+    }
+
+    int getId() const {
+        return id;
+    }
+
+    void display() const {
+        cout << left << setw(10) << id
+             << setw(25) << name
+             << setw(10) << marks << endl;
+    }
+
+    void saveToFile(ofstream &file) const {
+        file << id << "," << name << "," << marks << endl;
+    }
+};
+
+void addStudent(vector<Student>& students) {
+    int id;
+    string name;
+    float marks;
+
+    cout << "\nEnter Student ID: ";
+    cin >> id;
+
+    cin.ignore();
+
+    cout << "Enter Student Name: ";
+    getline(cin, name);
+
+    cout << "Enter Marks: ";
+    cin >> marks;
+
+    students.emplace_back(id, name, marks);
+
+    cout << "\nStudent added successfully!\n";
+}
+
+void displayStudents(const vector<Student>& students) {
+    if (students.empty()) {
+        cout << "\nNo students available.\n";
+        return;
+    }
+
+    cout << "\n========== Student List ==========\n";
+
+    cout << left << setw(10) << "ID"
+         << setw(25) << "Name"
+         << setw(10) << "Marks" << endl;
+
+    cout << "---------------------------------------------\n";
+
+    for (const Student& student : students) {
+        student.display();
+    }
+}
+
+void saveStudents(const vector<Student>& students) {
+    ofstream file("students.txt");
+
+    if (!file) {
+        cout << "\nError: Could not create file.\n";
+        return;
+    }
+
+    for (const Student& student : students) {
+        student.saveToFile(file);
+    }
+
+    file.close();
+
+    cout << "\nStudent data saved successfully!\n";
+}
+
+int main() {
+    vector<Student> students;
+    int choice;
+
+    do {
+        cout << "\n====================================\n";
+        cout << "      STUDENT MANAGEMENT SYSTEM\n";
+        cout << "====================================\n";
+        cout << "1. Add Student\n";
+        cout << "2. Display Students\n";
+        cout << "3. Save Students\n";
+        cout << "4. Exit\n";
+        cout << "====================================\n";
+
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                addStudent(students);
+                break;
+
+            case 2:
+                displayStudents(students);
+                break;
+
+            case 3:
+                saveStudents(students);
+                break;
+
+            case 4:
+                cout << "\nThank you for using the Student Management System!\n";
+                break;
+
+            default:
+                cout << "\nInvalid choice. Please try again.\n";
+        }
+
+    } while (choice != 4);
+
+    return 0;
+}
