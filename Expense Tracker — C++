@@ -1,0 +1,142 @@
+#include <iostream>
+#include <vector>
+#include <iomanip>
+using namespace std;
+
+class Expense {
+private:
+    string category;
+    double amount;
+
+public:
+    Expense(string cat, double amt) {
+        category = cat;
+        amount = amt;
+    }
+
+    string getCategory() const {
+        return category;
+    }
+
+    double getAmount() const {
+        return amount;
+    }
+
+    void display() const {
+        cout << left << setw(20) << category
+             << "Rs. " << fixed << setprecision(2) << amount << endl;
+    }
+};
+
+void addExpense(vector<Expense>& expenses) {
+    string category;
+    double amount;
+
+    cout << "\nEnter expense category: ";
+    cin.ignore();
+    getline(cin, category);
+
+    cout << "Enter amount: Rs. ";
+    cin >> amount;
+
+    if (amount <= 0) {
+        cout << "Invalid amount!\n";
+        return;
+    }
+
+    expenses.emplace_back(category, amount);
+
+    cout << "\nExpense added successfully!\n";
+}
+
+void viewExpenses(const vector<Expense>& expenses) {
+    if (expenses.empty()) {
+        cout << "\nNo expenses recorded yet.\n";
+        return;
+    }
+
+    cout << "\n========== EXPENSE LIST ==========\n";
+    cout << left << setw(20) << "Category" << "Amount\n";
+    cout << "----------------------------------\n";
+
+    for (const Expense& expense : expenses) {
+        expense.display();
+    }
+}
+
+void calculateTotal(const vector<Expense>& expenses) {
+    double total = 0;
+
+    for (const Expense& expense : expenses) {
+        total += expense.getAmount();
+    }
+
+    cout << "\nTotal Expenses: Rs. "
+         << fixed << setprecision(2) << total << endl;
+}
+
+void findHighestExpense(const vector<Expense>& expenses) {
+    if (expenses.empty()) {
+        cout << "\nNo expenses available.\n";
+        return;
+    }
+
+    const Expense* highest = &expenses[0];
+
+    for (const Expense& expense : expenses) {
+        if (expense.getAmount() > highest->getAmount()) {
+            highest = &expense;
+        }
+    }
+
+    cout << "\nHighest Expense:\n";
+    highest->display();
+}
+
+int main() {
+    vector<Expense> expenses;
+    int choice;
+
+    do {
+        cout << "\n====================================\n";
+        cout << "         EXPENSE TRACKER\n";
+        cout << "====================================\n";
+        cout << "1. Add Expense\n";
+        cout << "2. View Expenses\n";
+        cout << "3. Calculate Total\n";
+        cout << "4. Find Highest Expense\n";
+        cout << "5. Exit\n";
+        cout << "====================================\n";
+
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                addExpense(expenses);
+                break;
+
+            case 2:
+                viewExpenses(expenses);
+                break;
+
+            case 3:
+                calculateTotal(expenses);
+                break;
+
+            case 4:
+                findHighestExpense(expenses);
+                break;
+
+            case 5:
+                cout << "\nThank you for using Expense Tracker!\n";
+                break;
+
+            default:
+                cout << "\nInvalid choice. Please try again.\n";
+        }
+
+    } while (choice != 5);
+
+    return 0;
+}
