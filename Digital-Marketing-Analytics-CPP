@@ -1,0 +1,407 @@
+#include <iostream>
+#include <iomanip>
+#include <vector>
+#include <string>
+#include <algorithm>
+
+using namespace std;
+
+struct Campaign {
+    string name;
+    string platform;
+
+    long long impressions;
+    long long clicks;
+    double spend;
+    long long conversions;
+    double revenue;
+
+    double getCTR() const {
+        if (impressions == 0)
+            return 0;
+        return (double)clicks / impressions * 100;
+    }
+
+    double getCPC() const {
+        if (clicks == 0)
+            return 0;
+        return spend / clicks;
+    }
+
+    double getConversionRate() const {
+        if (clicks == 0)
+            return 0;
+        return (double)conversions / clicks * 100;
+    }
+
+    double getCPA() const {
+        if (conversions == 0)
+            return 0;
+        return spend / conversions;
+    }
+
+    double getROAS() const {
+        if (spend == 0)
+            return 0;
+        return revenue / spend;
+    }
+
+    double getProfit() const {
+        return revenue - spend;
+    }
+};
+
+void displayCampaign(const Campaign& c) {
+
+    cout << "\n---------------------------------------------\n";
+    cout << "Campaign: " << c.name << endl;
+    cout << "Platform: " << c.platform << endl;
+
+    cout << "Impressions: " << c.impressions << endl;
+    cout << "Clicks: " << c.clicks << endl;
+
+    cout << fixed << setprecision(2);
+
+    cout << "Ad Spend: $" << c.spend << endl;
+    cout << "Conversions: " << c.conversions << endl;
+    cout << "Revenue: $" << c.revenue << endl;
+
+    cout << "\nMarketing Metrics\n";
+
+    cout << "CTR: "
+         << c.getCTR()
+         << "%\n";
+
+    cout << "CPC: $"
+         << c.getCPC()
+         << endl;
+
+    cout << "Conversion Rate: "
+         << c.getConversionRate()
+         << "%\n";
+
+    cout << "CPA: $"
+         << c.getCPA()
+         << endl;
+
+    cout << "ROAS: "
+         << c.getROAS()
+         << "x\n";
+
+    cout << "Profit: $"
+         << c.getProfit()
+         << endl;
+}
+
+void displayOverallReport(
+    const vector<Campaign>& campaigns
+) {
+
+    if (campaigns.empty()) {
+        cout << "\nNo campaign data available.\n";
+        return;
+    }
+
+    long long totalImpressions = 0;
+    long long totalClicks = 0;
+    long long totalConversions = 0;
+
+    double totalSpend = 0;
+    double totalRevenue = 0;
+
+    for (const Campaign& c : campaigns) {
+
+        totalImpressions += c.impressions;
+        totalClicks += c.clicks;
+        totalConversions += c.conversions;
+
+        totalSpend += c.spend;
+        totalRevenue += c.revenue;
+    }
+
+    double ctr = 0;
+    double conversionRate = 0;
+    double cpc = 0;
+    double cpa = 0;
+    double roas = 0;
+
+    if (totalImpressions > 0)
+        ctr =
+            (double)totalClicks /
+            totalImpressions * 100;
+
+    if (totalClicks > 0) {
+
+        conversionRate =
+            (double)totalConversions /
+            totalClicks * 100;
+
+        cpc =
+            totalSpend /
+            totalClicks;
+    }
+
+    if (totalConversions > 0)
+        cpa =
+            totalSpend /
+            totalConversions;
+
+    if (totalSpend > 0)
+        roas =
+            totalRevenue /
+            totalSpend;
+
+    double profit =
+        totalRevenue - totalSpend;
+
+    cout << "\n=============================================\n";
+    cout << "        OVERALL MARKETING REPORT\n";
+    cout << "=============================================\n";
+
+    cout << fixed << setprecision(2);
+
+    cout << "Total Campaigns: "
+         << campaigns.size()
+         << endl;
+
+    cout << "Total Impressions: "
+         << totalImpressions
+         << endl;
+
+    cout << "Total Clicks: "
+         << totalClicks
+         << endl;
+
+    cout << "Total Spend: $"
+         << totalSpend
+         << endl;
+
+    cout << "Total Conversions: "
+         << totalConversions
+         << endl;
+
+    cout << "Total Revenue: $"
+         << totalRevenue
+         << endl;
+
+    cout << "Total Profit: $"
+         << profit
+         << endl;
+
+    cout << "\nKey Metrics\n";
+
+    cout << "CTR: "
+         << ctr
+         << "%\n";
+
+    cout << "CPC: $"
+         << cpc
+         << endl;
+
+    cout << "Conversion Rate: "
+         << conversionRate
+         << "%\n";
+
+    cout << "CPA: $"
+         << cpa
+         << endl;
+
+    cout << "ROAS: "
+         << roas
+         << "x\n";
+}
+
+void showBestCampaign(
+    const vector<Campaign>& campaigns
+) {
+
+    if (campaigns.empty())
+        return;
+
+    auto best =
+        max_element(
+            campaigns.begin(),
+            campaigns.end(),
+            [](const Campaign& a,
+               const Campaign& b) {
+
+                return a.getROAS() <
+                       b.getROAS();
+            }
+        );
+
+    cout << "\n=============================================\n";
+    cout << "             BEST CAMPAIGN\n";
+    cout << "=============================================\n";
+
+    cout << "Campaign: "
+         << best->name
+         << endl;
+
+    cout << "Platform: "
+         << best->platform
+         << endl;
+
+    cout << fixed << setprecision(2);
+
+    cout << "ROAS: "
+         << best->getROAS()
+         << "x\n";
+
+    cout << "Revenue: $"
+         << best->revenue
+         << endl;
+
+    cout << "Conversions: "
+         << best->conversions
+         << endl;
+}
+
+void addCampaign(
+    vector<Campaign>& campaigns
+) {
+
+    Campaign c;
+
+    cin.ignore();
+
+    cout << "\nEnter campaign name: ";
+    getline(cin, c.name);
+
+    cout << "Enter platform: ";
+    getline(cin, c.platform);
+
+    cout << "Enter impressions: ";
+    cin >> c.impressions;
+
+    cout << "Enter clicks: ";
+    cin >> c.clicks;
+
+    cout << "Enter advertising spend: $";
+    cin >> c.spend;
+
+    cout << "Enter conversions: ";
+    cin >> c.conversions;
+
+    cout << "Enter revenue: $";
+    cin >> c.revenue;
+
+    campaigns.push_back(c);
+
+    cout << "\nCampaign added successfully!\n";
+}
+
+int main() {
+
+    vector<Campaign> campaigns = {
+
+        {
+            "Summer Sale",
+            "Facebook",
+            120000,
+            4200,
+            850,
+            180,
+            3600
+        },
+
+        {
+            "Google Search",
+            "Google Ads",
+            80000,
+            5200,
+            1200,
+            260,
+            5200
+        },
+
+        {
+            "Retargeting",
+            "Instagram",
+            70000,
+            3100,
+            550,
+            190,
+            4200
+        },
+
+        {
+            "Lead Generation",
+            "Google Ads",
+            65000,
+            4100,
+            900,
+            220,
+            4400
+        }
+    };
+
+    int choice;
+
+    do {
+
+        cout << "\n\n";
+        cout << "=============================================\n";
+        cout << "     DIGITAL MARKETING ANALYTICS SYSTEM\n";
+        cout << "=============================================\n";
+
+        cout << "1. View All Campaigns\n";
+        cout << "2. View Overall Report\n";
+        cout << "3. View Best Campaign\n";
+        cout << "4. Add New Campaign\n";
+        cout << "5. Exit\n";
+
+        cout << "\nEnter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+
+            case 1:
+
+                if (campaigns.empty()) {
+
+                    cout << "\nNo campaigns available.\n";
+
+                } else {
+
+                    for (const Campaign& c : campaigns)
+                        displayCampaign(c);
+                }
+
+                break;
+
+            case 2:
+
+                displayOverallReport(campaigns);
+
+                break;
+
+            case 3:
+
+                showBestCampaign(campaigns);
+
+                break;
+
+            case 4:
+
+                addCampaign(campaigns);
+
+                break;
+
+            case 5:
+
+                cout << "\nThank you for using "
+                     << "Digital Marketing Analytics System!\n";
+
+                break;
+
+            default:
+
+                cout << "\nInvalid choice. "
+                     << "Please try again.\n";
+        }
+
+    } while (choice != 5);
+
+    return 0;
+}
