@@ -1,0 +1,147 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+struct Book {
+    int id;
+    string title;
+    string author;
+    bool available;
+};
+
+void displayBooks(Book books[], int size) {
+    cout << "\n========== LIBRARY BOOKS ==========\n";
+
+    for (int i = 0; i < size; i++) {
+        cout << "\nBook ID   : " << books[i].id;
+        cout << "\nTitle     : " << books[i].title;
+        cout << "\nAuthor    : " << books[i].author;
+        cout << "\nStatus    : "
+             << (books[i].available ? "Available" : "Borrowed");
+        cout << "\n-----------------------------------\n";
+    }
+}
+
+void searchBook(Book books[], int size) {
+    int id;
+
+    cout << "\nEnter Book ID to search: ";
+    cin >> id;
+
+    for (int i = 0; i < size; i++) {
+        if (books[i].id == id) {
+            cout << "\nBook Found!\n";
+            cout << "Title  : " << books[i].title << endl;
+            cout << "Author : " << books[i].author << endl;
+            cout << "Status : "
+                 << (books[i].available ? "Available" : "Borrowed")
+                 << endl;
+            return;
+        }
+    }
+
+    cout << "\nBook not found.\n";
+}
+
+void borrowBook(Book books[], int size) {
+    int id;
+
+    cout << "\nEnter Book ID to borrow: ";
+    cin >> id;
+
+    for (int i = 0; i < size; i++) {
+        if (books[i].id == id) {
+
+            if (books[i].available) {
+                books[i].available = false;
+                cout << "\nBook borrowed successfully!\n";
+            } else {
+                cout << "\nThis book is already borrowed.\n";
+            }
+
+            return;
+        }
+    }
+
+    cout << "\nBook not found.\n";
+}
+
+void returnBook(Book books[], int size) {
+    int id;
+
+    cout << "\nEnter Book ID to return: ";
+    cin >> id;
+
+    for (int i = 0; i < size; i++) {
+        if (books[i].id == id) {
+
+            if (!books[i].available) {
+                books[i].available = true;
+                cout << "\nBook returned successfully!\n";
+            } else {
+                cout << "\nThis book was not borrowed.\n";
+            }
+
+            return;
+        }
+    }
+
+    cout << "\nBook not found.\n";
+}
+
+int main() {
+
+    Book books[5] = {
+        {101, "The Alchemist", "Paulo Coelho", true},
+        {102, "1984", "George Orwell", true},
+        {103, "Atomic Habits", "James Clear", true},
+        {104, "The Great Gatsby", "F. Scott Fitzgerald", true},
+        {105, "Clean Code", "Robert C. Martin", true}
+    };
+
+    int choice;
+
+    do {
+        cout << "\n====================================\n";
+        cout << "       LIBRARY MANAGEMENT SYSTEM\n";
+        cout << "====================================\n";
+        cout << "1. Display All Books\n";
+        cout << "2. Search for a Book\n";
+        cout << "3. Borrow a Book\n";
+        cout << "4. Return a Book\n";
+        cout << "5. Exit\n";
+        cout << "====================================\n";
+
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+
+        case 1:
+            displayBooks(books, 5);
+            break;
+
+        case 2:
+            searchBook(books, 5);
+            break;
+
+        case 3:
+            borrowBook(books, 5);
+            break;
+
+        case 4:
+            returnBook(books, 5);
+            break;
+
+        case 5:
+            cout << "\nThank you for using the Library System!\n";
+            break;
+
+        default:
+            cout << "\nInvalid choice. Please try again.\n";
+        }
+
+    } while (choice != 5);
+
+    return 0;
+}
